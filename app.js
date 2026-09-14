@@ -1,0 +1,20 @@
+require('dotenv').config()
+const express = require("express");
+const app = express();
+const productRoutes = require('./routes/product.routes')
+
+
+app.use(express.static('public'))
+app.use(express.json())
+
+app.use('/' , productRoutes)
+
+app.all("/*splat", (req, res) => {
+    res.status(404).json({
+        Msg: "Not Found"
+    });
+});
+
+app.listen(8000 , ()=>{
+    console.log(`Listening On Port 8000`)
+})
