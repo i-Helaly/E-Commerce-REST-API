@@ -1,13 +1,16 @@
 require('dotenv').config()
 const express = require("express");
 const app = express();
-const productRoutes = require('./routes/product.routes')
+const productRoutes = require('./routes/product.routes');
+const UserRoutes = require('./routes/user.route')
 
 
 app.use(express.static('public'))
 app.use(express.json())
 
 app.use('/' , productRoutes)
+app.use('/' , UserRoutes)
+
 
 app.all("/*splat", (req, res) => {
     res.status(404).json({
