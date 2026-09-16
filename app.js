@@ -2,11 +2,13 @@ require('dotenv').config()
 const express = require("express");
 const app = express();
 const productRoutes = require('./routes/product.routes');
-const UserRoutes = require('./routes/user.route')
+const UserRoutes = require('./routes/user.route');
+const cors = require('cors');
 
 
 app.use(express.static('public'))
 app.use(express.json())
+app.use(cors())
 
 app.use('/' , productRoutes)
 app.use('/' , UserRoutes)
