@@ -1,62 +1,64 @@
 
 const User = require('../models/user.model');
+const asyncWrapper = require('../middlewares/asyncWrapper')
 const jSend = require("../utils/Jsendvar")
+const appError = require('../utils/appError')
 
-const getUsers = async (req , res)=>{
-  try{
+const getUsers = asyncWrapper (
+    async (req , res , next)=>{
+
       const users = await User.find();
      res.status(200).json({status: jSend.SUCCESS , data:{users}})
-  }catch(err){
-           console.error(err);
-    res.status(500).json({status : jSend.ERROR , message : {msg : "internal Error"}})
-  }
-}
 
-const getUser = async (req , res)=>{
-  try{
+})
+
+const getUser = asyncWrapper(
+    async (req , res , next )=>{
+  
     const userId = req.params.id;
-      const user = await User.findOne(userId);
-     res.status(200).json({status: jSend.SUCCESS , data:{user}})
-  }catch(err){
-           console.error(err);
-    res.status(500).json({status : jSend.ERROR , message : {msg : "internal Error"}})
-  }
-}
+      const user = await User.findById(userId);
+      if (!user){
+         const error = appError.create( "user Not Found" ,404 , jSend.FAIL )
+        return next(error);
 
-const createUser = async (req , res)=>{
-try{
-        console.log(req.body);
+      }
+     return res.status(200).json({status: jSend.SUCCESS , data:{user}})
+}
+)
+
+const createUser = asyncWrapper( 
+    async (req , res , next)=>{
+
+        
   const user = await User.create(req.body);
    res.status(201).json({status: jSend.SUCCESS , data:{user}})
-}catch(err){
-        console.error(err);
-    res.status(500).json({status : jSend.ERROR , message : {msg : "internal Error"}})
-}
 
-}
-const updateUser = async (req , res)=>{
-try{
+
+})
+const updateUser = asyncWrapper( 
+    async (req , res , next)=>{
+
     const userId = req.params.id;
     const editUser = await User.findByIdAndUpdate(userId, req.body , {new : true})
+          if (!editUser){
+         const error = appError.create( "user Not Found" ,404 , jSend.FAIL )
+        return next(error);
+      }
    res.status(200).json({status: jSend.SUCCESS , data:{editUser}})
-}catch(err){
-        console.error(err);
-    res.status(500).json({status : jSend.ERROR , message : {msg : "internal Error"}})
-}
+})
 
-}
+const deleteUser = asyncWrapper( 
+    async (req , res, next)=>{
 
-const deleteUser = async (req , res)=>{
-try{
     const userId = req.params.id;
-     await User.findByIdAndDelete(userId)
+     const user = await User.findByIdAndDelete(userId);
+           if (!user){
+        const error = appError.create( "user Not Found" ,404 , jSend.FAIL )
+        return next(error);
+      }
    res.status(200).json({status: jSend.SUCCESS , data:{msg : "deleted"}})
-}catch(err){
-        console.error(err);
-    res.status(500).json({status : jSend.ERROR , message : {msg : "internal Error"}})
-}
 
-}
+})
 
 module.exports = {
     getUsers,
