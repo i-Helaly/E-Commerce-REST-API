@@ -1,11 +1,11 @@
 
 const mongoose = require('mongoose');
 
-mongoose.connect(process.env.URI).then(() => {
-    console.log("Connected Successfully")
-}).catch((err) => {
-    console.log(err)
-})
+// mongoose.connect(process.env.URI).then(() => {
+//     console.log("Connected Successfully")
+// }).catch((err) => {
+//     console.log(err)
+// })
 
 const productSchema = new mongoose.Schema({
     name: {
