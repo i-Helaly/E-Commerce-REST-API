@@ -26,6 +26,7 @@ const logIn = asyncWrapper(
             const error = appError.create("password not match" , 400 , jSend.ERROR);
             next(error);
         }
+        req.session.userId = user._id
         res.status(200).json({status: jSend.SUCCESS , data:{msg : "login successfully"}})
     }
 )
