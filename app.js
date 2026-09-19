@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const productRoutes = require('./routes/product.routes');
 const UserRoutes = require('./routes/user.route');
+const authRoutes = require('./routes/auth.routes')
 const jSend = require("./utils/Jsendvar")
 const cors = require('cors');
 
@@ -13,7 +14,7 @@ app.use(cors())
 
 app.use('/' , productRoutes)
 app.use('/' , UserRoutes)
-
+app.use('/' , authRoutes)
 
 app.all("/*splat", (req, res) => {
     res.status(404).json({
