@@ -30,7 +30,19 @@ const logIn = asyncWrapper(
         res.status(200).json({status: jSend.SUCCESS , data:{msg : "login successfully"}})
     }
 )
+const logOut = asyncWrapper(
+    async (req, res, next) => {
+      req.session.destroy((err)=>{
+        if(err){
+            const error =   appError.create( "Logout failed" , 500 ,jSend.ERROR);
+            next(error)
+        }
+      })
+        res.status(200).json({status: jSend.SUCCESS , data:{msg : "logout successfully"}})
+    }
+)
 module.exports = {
     register,
-    logIn
+    logIn,
+    logOut
 }

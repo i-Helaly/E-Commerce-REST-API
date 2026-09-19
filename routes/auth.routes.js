@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.post('/api/auth/register' , authController.register)
 router.post('/api/auth/login' , authController.logIn)
+router.post('/api/auth/logout' , authController.logOut)
 
 
 

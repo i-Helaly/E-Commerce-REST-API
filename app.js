@@ -9,7 +9,7 @@ const cors = require('cors');
 const session = require("express-session");
 const { cookie } = require('express-validator');
 const MongoStore = require("connect-mongo").default;
-
+const orderRoutes = require('./routes/orders.routes')
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -33,9 +33,11 @@ app.use(session({
     },
       store: store
 }))
+
 app.use('/' , productRoutes)
 app.use('/' , UserRoutes)
 app.use('/' , authRoutes)
+app.use('/' , orderRoutes)
 
 app.all("/*splat", (req, res) => {
     res.status(404).json({
