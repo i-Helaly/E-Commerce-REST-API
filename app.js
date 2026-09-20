@@ -11,6 +11,8 @@ const { cookie } = require('express-validator');
 const MongoStore = require("connect-mongo").default;
 const orderRoutes = require('./routes/orders.routes')
 const categoryRoutes = require("./routes/category.routes")
+const reviewsRoutes = require("./routes/review.routes")
+
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -40,6 +42,7 @@ app.use('/' , UserRoutes)
 app.use('/' , authRoutes)
 app.use('/' , orderRoutes)
 app.use('/' , categoryRoutes)
+app.use('/' , reviewsRoutes)
 
 app.all("/*splat", (req, res) => {
     res.status(404).json({
