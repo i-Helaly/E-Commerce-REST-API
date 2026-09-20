@@ -15,6 +15,11 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: [true , "email is already exists"],
         required: true,
+    }, 
+    role:{
+        type: String,
+        enum: ["user" , "admin"],
+        default: "user"
     }
 })
 
