@@ -7,16 +7,20 @@ const authRoutes = require('./routes/auth.routes')
 const jSend = require("./utils/Jsendvar")
 const cors = require('cors');
 const session = require("express-session");
-const { cookie } = require('express-validator');
 const MongoStore = require("connect-mongo").default;
 const orderRoutes = require('./routes/orders.routes')
 const categoryRoutes = require("./routes/category.routes")
 const reviewsRoutes = require("./routes/review.routes")
+const path = require("path");
 
 
 app.use(express.static('public'))
 app.use(express.json())
-app.use(cors())
+app.use(cors());
+app.use(
+    "/uploads",
+    express.static(path.join(__dirname, "uploads"))
+);
 
 const store =  MongoStore.create({
     mongoUrl: process.env.URI,
