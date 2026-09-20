@@ -11,7 +11,7 @@ const getProducts = asyncWrapper (
 
 const getProduct = asyncWrapper (async (req , res , next)=>{
     const productId = req.params.id;
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId).populate("category");
     if(!product){
         const error = appError.create("Product Not Found" , 400 , jSend.ERROR);
         return next(error)

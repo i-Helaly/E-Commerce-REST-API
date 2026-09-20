@@ -3,12 +3,14 @@ const router = express.Router();
 const userController = require('../controllers/user.controller');
 const bodyOfUserValidation = require('../middlewares/userValidation');
 const resOfValidation = require('../middlewares/resultValidation');
+const authenticate = require('../middlewares/authentication');
+const role = require('../middlewares/role');
 
 
-router.get('/api/user' , userController.getUsers)
-router.get('/api/user/:id' , userController.getUser)
-router.post('/api/user' ,bodyOfUserValidation ,resOfValidation ,userController.createUser)
-router.patch('/api/user/:id' , userController.updateUser)
-router.delete('/api/user/:id' , userController.deleteUser)
+router.get('/api/user' ,authenticate, role("admin"), userController.getUsers)
+router.get('/api/user/:id' , authenticate, role("admin" , "user"), userController.getUser)
+router.post('/api/user' ,bodyOfUserValidation ,resOfValidation , authenticate, role("admin"), userController.createUser)
+router.patch('/api/user/:id' , authenticate, role("admin" , "user"), userController.updateUser)
+router.delete('/api/user/:id' ,authenticate, role("admin"),  userController.deleteUser)
 
 module.exports = router;

@@ -1,11 +1,7 @@
 
 const mongoose = require('mongoose');
 
-// mongoose.connect(process.env.URI).then(() => {
-//     console.log("Connected Successfully")
-// }).catch((err) => {
-//     console.log(err)
-// })
+
 
 const productSchema = new mongoose.Schema({
     name: {
@@ -20,7 +16,13 @@ const productSchema = new mongoose.Schema({
     }, stock: {
         type: Number,
         required: true
+    }, category:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Category",
+          required: true
+
     }
+
 })
 
 const Product = mongoose.model("Product", productSchema);
