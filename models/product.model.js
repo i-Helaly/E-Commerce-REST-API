@@ -12,10 +12,17 @@ const productSchema = new mongoose.Schema({
         required: true
     }, price: {
         type: Number,
-        required: true
+        required: true,
+        min: 0.01
     }, stock: {
         type: Number,
-        required: true
+        required: true,
+        min : 0,
+        validate: {
+            validator: Number.isInteger,
+            message: "Stock must be an integer"
+        }
+
     }, category:{
         type: mongoose.Schema.Types.ObjectId,
         ref: "Category",
