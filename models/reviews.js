@@ -6,7 +6,9 @@ const mongoose = require("mongoose");
 const  ReviewSchema = new mongoose.Schema({
     rate: {
         type: Number,
-        require: true
+        required: true,
+        min: 1,
+        max: 5
     },
         comment: {
         type: String,
