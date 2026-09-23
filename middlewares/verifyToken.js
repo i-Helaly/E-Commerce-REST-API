@@ -1,6 +1,7 @@
 
 const jwt = require("jsonwebtoken");
 const appError = require("../utils/appError");
+const jSend = require("../utils/Jsendvar")
 
 const verifyToken = (req , res , next)=>{
 
@@ -14,14 +15,15 @@ const verifyToken = (req , res , next)=>{
     try{
 
         const token = authHeaders.split(" ")[1];
-        const payload = jwt.verify(token , process.env.JWT_SECRET_KEY)
-
+        const payload = jwt.verify(token , process.env.JWT_SECRET_KEY);
+        req.user = payload;
+        
+        next();
     }catch(err){
         const error = appError.create(" invalid token" ,401 , jSend.FAIL )
        return next(error);
     }
 
-    next();
 }
 
 module.exports = verifyToken;

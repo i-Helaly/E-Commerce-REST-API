@@ -30,8 +30,8 @@ const logIn = asyncWrapper(
             const error = appError.create("password not match" , 400 , jSend.ERROR);
             next(error);
         }
-        // req.session.userId = user._id
-        const token = JWT({email: email , id: user._id})
+      
+        const token = JWT({email: email , role : user.role ,id: user._id})
        
         res.status(200).json({status: jSend.SUCCESS , data:{token}})
     }
