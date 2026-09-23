@@ -2,6 +2,7 @@ const Product = require('../models/product.model')
 const appError = require('../utils/appError');
 const asyncWrapper = require('../middlewares/asyncWrapper');
 const jSend = require("../utils/Jsendvar");
+const XLSX = require("xlsx");
 
 
 const getProducts = asyncWrapper(
@@ -74,7 +75,21 @@ const uploadProductImage = asyncWrapper(
 
     })
 
+    const uploadProducts = asyncWrapper(
+        async (req , res , next)=>{
 
+            console.log(req.file);
+
+            const workBook = XLSX.readFile(req.file.path);
+            const sheetName = workBook.SheetNames[0];
+            const sheet = workBook.Sheets[sheetName];
+            const products = XLSX.utils.sheet_to_json(sheet);
+
+            const result = await Product.insertMany(products);
+
+            res.status(201).json({status: jSend.SUCCESS , data: {result}})
+        }
+    )
 
 
 module.exports = {
@@ -83,5 +98,6 @@ module.exports = {
     postProduct,
     updateProduct,
     deleteProduct,
-    uploadProductImage
+    uploadProductImage,
+    uploadProducts
 }
