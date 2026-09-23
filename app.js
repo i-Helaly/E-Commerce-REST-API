@@ -22,24 +22,24 @@ app.use(
     express.static(path.join(__dirname, "uploads"))
 );
 
-const store =  MongoStore.create({
-    mongoUrl: process.env.URI,
-    collectionName: "sessions"
-})
+// const store =  MongoStore.create({
+//     mongoUrl: process.env.URI,
+//     collectionName: "sessions"
+// })
 
-store.on("error", (error) => {
-    console.log("SESSION STORE ERROR:", error);
-});
+// store.on("error", (error) => {
+//     console.log("SESSION STORE ERROR:", error);
+// });
 
-app.use(session({
-    secret: "this is my secret key to my session",
-    saveUninitialized: true,
-     resave: false,
-    cookie:{
-        maxAge: 24 * 60 * 600 *100
-    },
-      store: store
-}))
+// app.use(session({
+//     secret: "this is my secret key to my session",
+//     saveUninitialized: true,
+//      resave: false,
+//     cookie:{
+//         maxAge: 24 * 60 * 600 *100
+//     },
+//       store: store
+// }))
 
 app.use('/' , productRoutes)
 app.use('/' , UserRoutes)

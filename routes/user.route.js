@@ -5,9 +5,10 @@ const bodyOfUserValidation = require('../middlewares/userValidation');
 const resOfValidation = require('../middlewares/resultValidation');
 const authenticate = require('../middlewares/authentication');
 const role = require('../middlewares/role');
+const verifyToken = require("../middlewares/verifyToken")
 
 
-router.get('/api/user' ,authenticate, role("admin"), userController.getUsers)
+router.get('/api/user' ,verifyToken, userController.getUsers)
 router.get('/api/user/:id' , authenticate, role("admin" , "user"), userController.getUser)
 router.post('/api/user' ,bodyOfUserValidation ,resOfValidation , authenticate, role("admin"), userController.createUser)
 router.patch('/api/user/:id' , authenticate, role("admin" , "user"), userController.updateUser)

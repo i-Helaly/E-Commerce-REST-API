@@ -7,6 +7,8 @@ const appError = require('../utils/appError')
 const getUsers = asyncWrapper (
     async (req , res , next)=>{
 
+      // console.log(req.headers)
+
       const users = await User.find();
      res.status(200).json({status: jSend.SUCCESS , data:{users}})
 
