@@ -8,7 +8,7 @@ const appError = require('../utils/appError');
 const createOrder = asyncWrapper(
     async (req, res, next) => {
 
-        const userId = req.session.userId;
+        const userId = req.user.userId;
         const { items } = req.body;
 
         for (let item of items) {
@@ -47,7 +47,7 @@ const createOrder = asyncWrapper(
 const getMyOrders = asyncWrapper(
     async (req, res, next) => {
 
-        const userId = req.session.userId;
+        const userId = req.user.userId ;
 
         const orders = await Order.find({ user: userId }, { __v: 0 }).populate("items.product", " name , description , price");
 
