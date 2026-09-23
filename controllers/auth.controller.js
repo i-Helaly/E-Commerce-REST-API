@@ -4,12 +4,16 @@ const jSend = require("../utils/Jsendvar")
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const appError = require('../utils/appError');
+const JWT = require("../utils/generateJwt")
 
 const register = asyncWrapper(
     async (req, res, next) => {
         const {name , password , email} = req.body;
         const hashPassword = await bcrypt.hash(password , 10)
-        const user =  await User.create({name , password: hashPassword , email});
+        const user =   new User({name , password: hashPassword , email});
+        const token = JWT({email: email , id: user._id})
+        user.token = token;
+        await user.save()
         res.status(200).json({status: jSend.SUCCESS , data :{user}})
     }
 )
@@ -26,8 +30,10 @@ const logIn = asyncWrapper(
             const error = appError.create("password not match" , 400 , jSend.ERROR);
             next(error);
         }
-        req.session.userId = user._id
-        res.status(200).json({status: jSend.SUCCESS , data:{msg : "login successfully"}})
+        // req.session.userId = user._id
+        const token = JWT({email: email , id: user._id})
+       
+        res.status(200).json({status: jSend.SUCCESS , data:{token}})
     }
 )
 const logOut = asyncWrapper(
