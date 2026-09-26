@@ -7,7 +7,14 @@ const XLSX = require("xlsx");
 
 const getProducts = asyncWrapper(
     async (req, res) => {
-        const data = await Product.find();
+
+        // console.log(req.query)
+        
+        const page = req.query.page * 1 || 1;
+        const limit = req.query.limit * 1 || 3;
+        const skip = (page - 1) * limit; 
+
+        const data = await Product.find().skip(skip).limit(limit);;
         res.status(200).json({ status: "success", data: { data } })
     })
 
