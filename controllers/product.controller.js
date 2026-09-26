@@ -8,13 +8,28 @@ const XLSX = require("xlsx");
 const getProducts = asyncWrapper(
     async (req, res) => {
 
-        // console.log(req.query)
-        
+        console.log(req.query)
+
+        // pagination
         const page = req.query.page * 1 || 1;
         const limit = req.query.limit * 1 || 3;
         const skip = (page - 1) * limit; 
 
-        const data = await Product.find().skip(skip).limit(limit);;
+        //filtering
+
+       let queryObj = {...req.query};
+        const excludedFields = ["limit" , "page" , "field" , "sort"];
+
+        excludedFields.forEach((field)=>{
+            delete queryObj[field]
+        });
+
+        
+        let queryStr = JSON.stringify(queryObj);
+        queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match)=> `$${match}`);
+        queryObj = JSON.parse(queryStr);
+
+        const data = await Product.find(queryObj).skip(skip).limit(limit);
         res.status(200).json({ status: "success", data: { data } })
     })
 
