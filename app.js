@@ -12,6 +12,7 @@ const orderRoutes = require('./routes/orders.routes')
 const categoryRoutes = require("./routes/category.routes")
 const reviewsRoutes = require("./routes/review.routes")
 const path = require("path");
+const qs = require("qs");
 
 
 app.use(express.static('public'))
@@ -22,25 +23,7 @@ app.use(
     express.static(path.join(__dirname, "uploads"))
 );
 
-// const store =  MongoStore.create({
-//     mongoUrl: process.env.URI,
-//     collectionName: "sessions"
-// })
-
-// store.on("error", (error) => {
-//     console.log("SESSION STORE ERROR:", error);
-// });
-
-// app.use(session({
-//     secret: "this is my secret key to my session",
-//     saveUninitialized: true,
-//      resave: false,
-//     cookie:{
-//         maxAge: 24 * 60 * 600 *100
-//     },
-//       store: store
-// }))
-
+app.set("query parser", (str) => qs.parse(str));
 app.use('/' , productRoutes)
 app.use('/' , UserRoutes)
 app.use('/' , authRoutes)
