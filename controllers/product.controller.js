@@ -6,9 +6,7 @@ const XLSX = require("xlsx");
 
 
 const getProducts = asyncWrapper(
-    async (req, res) => {
-
-        console.log(req.query)
+    async (req, res) => { 
 
         // pagination
         const page = req.query.page * 1 || 1;
@@ -29,7 +27,13 @@ const getProducts = asyncWrapper(
         queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match)=> `$${match}`);
         queryObj = JSON.parse(queryStr);
 
-        const data = await Product.find(queryObj).skip(skip).limit(limit);
+        //sorting
+          let sortBy = "-createdAt";
+          if(req.query.sort){
+             sortBy = req.query.sort.split(',').join(' ');
+            
+          }
+        const data = await Product.find(queryObj).skip(skip).limit(limit).sort(sortBy);
         res.status(200).json({ status: "success", data: { data } })
     })
 
