@@ -6,34 +6,40 @@ const XLSX = require("xlsx");
 
 
 const getProducts = asyncWrapper(
-    async (req, res) => { 
+    async (req, res) => {
 
         // pagination
         const page = req.query.page * 1 || 1;
         const limit = req.query.limit * 1 || 3;
-        const skip = (page - 1) * limit; 
+        const skip = (page - 1) * limit;
 
         //filtering
 
-       let queryObj = {...req.query};
-        const excludedFields = ["limit" , "page" , "field" , "sort"];
+        let queryObj = { ...req.query };
+        const excludedFields = ["limit", "page", "fields", "sort"];
 
-        excludedFields.forEach((field)=>{
+        excludedFields.forEach((field) => {
             delete queryObj[field]
         });
 
-        
+
         let queryStr = JSON.stringify(queryObj);
-        queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match)=> `$${match}`);
+        queryStr = queryStr.replace(/\b(gt|gte|lt|lte)\b/g, (match) => `$${match}`);
         queryObj = JSON.parse(queryStr);
 
         //sorting
-          let sortBy = "-createdAt";
-          if(req.query.sort){
-             sortBy = req.query.sort.split(',').join(' ');
-            
-          }
-        const data = await Product.find(queryObj).skip(skip).limit(limit).sort(sortBy);
+        let sortBy = "-createdAt";
+        if (req.query.sort) {
+            sortBy = req.query.sort.split(',').join(' ');
+
+        }
+        // filed limiting
+        const fields = req.query.fields
+            ? req.query.fields.split(",").join(" ")
+            : "-__v";
+
+
+        const data = await Product.find(queryObj).skip(skip).limit(limit).sort(sortBy).select(fields);
         res.status(200).json({ status: "success", data: { data } })
     })
 
@@ -83,39 +89,39 @@ const uploadProductImage = asyncWrapper(
         const product = await Product.findById(productId);
 
         if (!product) {
-            const error = appError.create("Product not found", 404, jSend.ERROR); 
-            return next(error); 
+            const error = appError.create("Product not found", 404, jSend.ERROR);
+            return next(error);
         }
         if (!req.file) {
-    return next(
-        appError.create(
-            "Image is required",
-            400,
-            jSend.ERROR
-        )
-    );
-}
+            return next(
+                appError.create(
+                    "Image is required",
+                    400,
+                    jSend.ERROR
+                )
+            );
+        }
         product.images.push(req.file.filename);
         await product.save();
         res.status(200).json({ status: jSend.SUCCESS, data: { product } });
 
     })
 
-    const uploadProducts = asyncWrapper(
-        async (req , res , next)=>{
+const uploadProducts = asyncWrapper(
+    async (req, res, next) => {
 
-            console.log(req.file);
+        console.log(req.file);
 
-            const workBook = XLSX.readFile(req.file.path);
-            const sheetName = workBook.SheetNames[0];
-            const sheet = workBook.Sheets[sheetName];
-            const products = XLSX.utils.sheet_to_json(sheet);
+        const workBook = XLSX.readFile(req.file.path);
+        const sheetName = workBook.SheetNames[0];
+        const sheet = workBook.Sheets[sheetName];
+        const products = XLSX.utils.sheet_to_json(sheet);
 
-            const result = await Product.insertMany(products);
+        const result = await Product.insertMany(products);
 
-            res.status(201).json({status: jSend.SUCCESS , data: {result}})
-        }
-    )
+        res.status(201).json({ status: jSend.SUCCESS, data: { result } })
+    }
+)
 
 
 module.exports = {
