@@ -19,19 +19,20 @@ const register = asyncWrapper(
 )
 const logIn = asyncWrapper(
     async (req, res, next) => {
-        const { password , email} = req.body;
-        const user = await User.findOne({email});
-        if(!user){
-            const error = appError.create("user not Found" , 400 , jSend.ERROR);
-            next(error);
-        }
-        const comparePassword = await bcrypt.compare(password , user.password);
-        if(!comparePassword){
-            const error = appError.create("password not match" , 400 , jSend.ERROR);
-            next(error);
-        }
-      
-        const token = JWT({email: email , role : user.role ,id: user._id})
+        // const { password , email} = req.body;
+        // const user = await User.findOne({email});
+        // if(!user){
+        //     const error = appError.create("user not Found" , 400 , jSend.ERROR);
+        //     next(error);
+        // }
+        // const comparePassword = await bcrypt.compare(password , user.password);
+        // if(!comparePassword){
+        //     const error = appError.create("password not match" , 400 , jSend.ERROR);
+        //     next(error);
+        // }
+    
+        const user = req.user;
+        const token = JWT({email: user.email , role : user.role ,id: user._id})
        
         res.status(200).json({status: jSend.SUCCESS , data:{token}})
     }
