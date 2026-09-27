@@ -13,6 +13,8 @@ const categoryRoutes = require("./routes/category.routes")
 const reviewsRoutes = require("./routes/review.routes")
 const path = require("path");
 const qs = require("qs");
+const passport = require("./config/passport");
+
 
 
 app.use(express.static('public'))
@@ -22,14 +24,16 @@ app.use(
     "/uploads",
     express.static(path.join(__dirname, "uploads"))
 );
-
+app.use(passport.initialize());
 app.set("query parser", (str) => qs.parse(str));
+
 app.use('/' , productRoutes)
 app.use('/' , UserRoutes)
 app.use('/' , authRoutes)
 app.use('/' , orderRoutes)
 app.use('/' , categoryRoutes)
-app.use('/' , reviewsRoutes)
+app.use('/' , reviewsRoutes);
+
 
 app.all("/*splat", (req, res) => {
     res.status(404).json({
