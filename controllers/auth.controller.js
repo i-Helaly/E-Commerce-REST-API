@@ -4,7 +4,8 @@ const jSend = require("../utils/Jsendvar")
 const User = require("../models/user.model");
 const bcrypt = require("bcrypt");
 const appError = require('../utils/appError');
-const JWT = require("../utils/generateJwt")
+const JWT = require("../utils/generateJwt");
+const transporter = require("../config/email")
 
 
 const register = asyncWrapper(
@@ -14,7 +15,16 @@ const register = asyncWrapper(
         const user =   new User({name , password: hashPassword , email});
         const token = JWT({email: email , id: user._id})
         user.token = token;
-        await user.save()
+        await user.save();
+
+        await transporter.sendMail({
+            from : process.env.EMAIL,
+            to: user.email,
+            subject: "Welcome to our E-Commerce!",
+            html:` <h1>Welcome ${user.name}! 🎉</h1>
+            <p>Your account has been created successfully.</p>
+            <p>We're happy to have you with us.</p>`
+        })
         res.status(200).json({status: jSend.SUCCESS , data :{user}})
     }
 )
