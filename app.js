@@ -14,11 +14,16 @@ const reviewsRoutes = require("./routes/review.routes")
 const path = require("path");
 const qs = require("qs");
 const passport = require("./config/passport");
-
+const rateLimit = require("express-rate-limit");
 
 
 app.use(express.static('public'))
-app.use(express.json())
+app.use(express.json());
+
+app.use(rateLimit({
+      windowMs: 15 * 60 * 1000,
+      limit: 100
+}))
 app.use(cors());
 app.use(
     "/uploads",
