@@ -10,9 +10,9 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: function (){
-            return !this.googleId
-        }
+        required:function () {
+        return !this.githubId;
+    }
     }, email: {
         type: String,
         unique: [true , "email is already exists"],
@@ -24,6 +24,9 @@ const userSchema = new mongoose.Schema({
         default: "user"
     },
     token:{
+        type: String
+    },
+        githubId: {
         type: String
     }
 })

@@ -63,6 +63,33 @@ const logIn = asyncWrapper(
         });
 
     }
+
+ )
+
+ const githubLogin = asyncWrapper(
+    async(req , res , next)=>{
+
+          const user = req.user;
+
+          const token = JWT({
+                            id: user._id,
+                email: user.email,
+                role: user.role
+          } , process.env.JWT_SECRET_KEY , {
+            expiresIn : "10m"
+          })
+
+          res.status(200).json({
+
+            status: "success",
+
+            data: {
+                token
+            }
+
+        });
+
+    }
  )
 
 const logOut = asyncWrapper(
@@ -80,5 +107,7 @@ module.exports = {
     register,
     logIn,
     logOut,
-    googleLogin
+    googleLogin,
+    githubLogin
+    
 }

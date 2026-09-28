@@ -23,6 +23,16 @@ router.get(
   authController.googleLogin
 );
 
+router.get("/api/auth/github" , passport.authenticate("github" , {
+   scope: ["user:email"]
+}))
+router.get(
+  "/api/auth/github/callback",
+  passport.authenticate("github", {
+    session: false
+  }),
+  authController.githubLogin
+);
 
 
 module.exports = router

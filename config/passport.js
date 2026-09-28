@@ -5,6 +5,7 @@ const bcrypt = require("bcrypt");
 const asyncWrapper = require("../middlewares/asyncWrapper");
 const User = require("../models/user.model");
 const GoogleStrategy = require("passport-google-oauth20").Strategy
+const GitHubStrategy = require("passport-github2").Strategy;
 
 // ====================
 // LocalStrategyy
@@ -31,39 +32,37 @@ passport.use(
         }))
 
 
+// ====================
+// GoogleStrategyy
+//===================
+
 passport.use(
     new GoogleStrategy(
         {
             clientID: process.env.GOOGLE_CLIENT_ID,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "http://localhost:8000/api/auth/google/callback"
+            callbackURL: process.env.GOOGLE_CALLBACK_URL
         },
 
         async (accessToken, refreshToken, profile, done) => {
             try {
-                console.log("========== GOOGLE PROFILE ==========");
+               
                 console.log(profile);
 
-                console.log("EMAIL:", profile.emails);
-                console.log("NAME:", profile.displayName);
-                console.log("GOOGLE ID:", profile.id);
 
                 const email = profile.emails?.[0]?.value;
                 const name = profile.displayName;
                 const googleId = profile.id;
 
-                console.log({
-                    email,
-                    name,
-                    googleId
-                });
-
-                // مؤقتًا فقط
-                return done(null, {
-                    email,
-                    name,
-                    googleId
-                });
+                let user = await User.findOne({email});
+                if(!user){
+                  user =  await User.create({
+                        email,
+                        name,
+                        googleId
+                    })
+                }
+                return done(null, user)
 
             } catch (error) {
                 console.log("GOOGLE ERROR:", error);
@@ -72,5 +71,43 @@ passport.use(
         }
     )
 );
+// ====================
+// GitHubStrategyy
+//===================
 
+passport.use(
+    new GitHubStrategy(
+        {
+            clientID: process.env.GITHUB_CLIENT_ID,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
+            callbackURL: process.env.GITHUB_CALLBACK_URL
+        },
+
+        async (accessToken, refreshToken, profile, done) => {
+            try {
+  
+
+                const githubId = profile.id;
+                const name = profile.displayName || profile.username;
+                const email = profile.emails?.[0]?.value;
+
+                let user = await User.findOne({ email });
+
+                if (!user) {
+                    user = await User.create({
+                        githubId,
+                        name,
+                        email
+                    });
+                }
+
+                return done(null, user);
+
+            } catch (err) {
+                console.log("USER CREATION ERROR:", err);
+                return done(err);
+            }
+        }
+    )
+);
 module.exports = passport;
