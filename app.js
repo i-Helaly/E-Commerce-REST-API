@@ -14,9 +14,13 @@ const reviewsRoutes = require("./routes/review.routes")
 const path = require("path");
 const qs = require("qs");
 const passport = require("./config/passport");
+const swaggerUi = require("swagger-ui-express");
+// const swaggerDocument = require("./swagger.json");
+const YAML = require("yamljs")
+const swaggerDocument = YAML.load(path.join(__dirname, 'swagger.yaml'));
 const rateLimit = require("express-rate-limit");
 
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(express.static('public'))
 app.use(express.json());
 
